@@ -1,0 +1,78 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Token {
+  id: Float!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  deletedAt: DateTime!
+  name: String!
+  address: String!
+  network: Network!
+  abi: String!
+  decimal: Float!
+  isAbleToBeSwapped: Token!
+  swapables: [Token!]!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+enum Network {
+  ETHEREUM
+  BSC
+}
+
+type SwapHistory {
+  id: Float!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  deletedAt: DateTime!
+  transaction: String!
+  user: UserWallet!
+  amount: Float!
+  from: Token!
+  to: Token!
+  result: SwapResult!
+}
+
+enum SwapResult {
+  PENDING
+  FAIL
+  SUCCESS
+}
+
+type UserWallet {
+  id: Float!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  deletedAt: DateTime!
+  address: String!
+  swapHistories: [SwapHistory!]!
+}
+
+type UserToken {
+  userWallet: UserWallet!
+  token: Token!
+  balance: Float!
+}
+
+type Query {
+  userWallet(address: String!): UserWallet!
+  tokenBalance(tokenId: Float!, address: String!): UserToken!
+  swapableTokens: [Token!]!
+  isAbleToBeSwapedTokens: [Token!]!
+  swapHistories(userWalletId: Float!): [SwapHistory!]!
+}
+
+type Mutation {
+  connectWallet(address: String!): UserWallet!
+  swapToken(address: String!, amount: Float!, toTokenId: Float!, fromTokenId: Float!): SwapHistory!
+}
+
+type Subscription {
+  swapHistoryList(userWalletId: Float!): SwapHistory!
+}
