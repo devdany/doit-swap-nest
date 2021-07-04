@@ -90,7 +90,7 @@ export class ContractResolver {
         const token = await this.tokenService.findByAddress(tokenAddress)
         const abi = JSON.parse(token.abi) as any[]
         const burnAbi = abi.find((attr) => attr.name === 'burn')
-        const decodedParameter = await this.contractService.decodeParameter(burnTransaction, burnAbi, token)
+        const decodedParameter = await this.contractService.decodeParameter(burnTransaction, burnAbi, token, 'burn(uint256)')
         const mintToken = await this.tokenService.findByAddress(mintTokenAddress);
         const userWallet = await this.userWalletService.findWallet(userWalletAddress)
 

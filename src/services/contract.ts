@@ -112,14 +112,14 @@ export class ContractService {
     
   }
 
-  async decodeParameter(transactionData: Transaction, abi: any, token: TokenEntity): Promise<any> {
+  async decodeParameter(transactionData: Transaction, abi: any, token: TokenEntity, funcSimpleAbi: string): Promise<any> {
     const input = transactionData.input;
     const types = abi.inputs.map(x=>x.internalType);
     const names = abi.inputs.map(x=>x.name);
 
     const blockchainClient = this.getBlockchainNetwork(token.network) 
 
-    const signature = blockchainClient.eth.abi.encodeFunctionSignature("burn(uint256)")
+    const signature = blockchainClient.eth.abi.encodeFunctionSignature(funcSimpleAbi)
     const signedData = "0x"+input.replace(signature,"");
 
     const r = blockchainClient.eth.abi.decodeParameters(types, signedData);
