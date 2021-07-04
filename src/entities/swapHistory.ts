@@ -17,7 +17,8 @@ import { TokenEntity } from './token'
 import { UserWalletEntity } from './userWallet'
 
 export enum SwapResult {
-  PENDING='PENDING',
+  BURNNING='BURNNING',
+  MINTTING='MINTTING',
   FAIL='FAIL',
   SUCCESS='SUCCESS',
 }

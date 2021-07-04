@@ -40,7 +40,8 @@ type SwapHistory {
 }
 
 enum SwapResult {
-  PENDING
+  BURNNING
+  MINTTING
   FAIL
   SUCCESS
 }
@@ -70,7 +71,8 @@ type Query {
 
 type Mutation {
   connectWallet(address: String!): UserWallet!
-  swapToken(address: String!, amount: Float!, toTokenId: Float!, fromTokenId: Float!): SwapHistory!
+  registerBrunTransactionChecker(transactionId: String!, mintTokenAddress: String!, tokenAddress: String!, userWalletAddress: String!): Boolean!
+  swapToken(transactionId: String!, address: String!, amount: Float!, toTokenId: Float!, fromTokenId: Float!): SwapHistory!
 }
 
 type Subscription {

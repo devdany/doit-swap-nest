@@ -39,4 +39,13 @@ export class TokenService {
       relations,
     });
   }
+
+  async findByAddress(address: string, relations?: string[]): Promise<TokenEntity> {
+    return this.tokenRepository.findOne({
+      where: {
+        address,
+      },
+      relations,
+    });
+  }
 }

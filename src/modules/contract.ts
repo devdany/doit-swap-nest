@@ -12,6 +12,10 @@ import { userWalletProviders } from '../providers/userWallet';
 import { UserWalletService } from '../services/userWallet';
 import { SwapHistoryService } from '../services/swapHistory'
 import { swapHistoryProviders } from '../providers/swapHistory'
+import { SchedulerRegistry } from '@nestjs/schedule'
+import { EtherscanService } from '../services/etherscan'
+import { TransactionService } from '../services/transactionService'
+import { transactionProviders } from '../providers/transaction'
 
 @Module({
   imports: [DatabaseModule, EthereumModule, BscModule],
@@ -21,11 +25,15 @@ import { swapHistoryProviders } from '../providers/swapHistory'
     ContractService,
     ContractResolver,
     SwapHistoryService,
+    SchedulerRegistry,
+    EtherscanService,
+    TransactionService,
     ...tokenProviders,
     ...userWalletProviders,
     ...ethereumProviders,
     ...bscProviders,
-    ...swapHistoryProviders
+    ...swapHistoryProviders,
+    ...transactionProviders,
   ],
 })
 export class ContractModule {}

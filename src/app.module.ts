@@ -5,6 +5,8 @@ import { UserWalletModule } from './modules/userWallet';
 import { ContractModule } from './modules/contract'
 import { TokenModule } from './modules/token'
 import { SwapHistoryModule } from './modules/swapHistory'
+import { ScheduleModule } from '@nestjs/schedule';
+import { TransactionModule } from './modules/transaction'
 
 @Module({
   imports: [
@@ -21,7 +23,9 @@ import { SwapHistoryModule } from './modules/swapHistory'
     ContractModule,
     TokenModule,
     SwapHistoryModule,
-    ConfigModule.forRoot({})
+    TransactionModule,
+    ConfigModule.forRoot({}),
+    ScheduleModule.forRoot(),
   ],
 })
 export class AppModule {}

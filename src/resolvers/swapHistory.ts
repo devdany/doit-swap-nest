@@ -1,13 +1,15 @@
-import { Resolver, Query, Args, Subscription } from '@nestjs/graphql';
+import { Resolver, Query, Args, Subscription, Mutation } from '@nestjs/graphql';
 import { SwapHistoryService } from '../services/swapHistory';
 import { SwapHistoryEntity } from '../entities/swapHistory';
-import { PubSub } from 'graphql-subscriptions'
+import { PubSub } from 'graphql-subscriptions';
 
 const pubSub = new PubSub();
 
 @Resolver()
 export class SwapHistoryResolver {
-  constructor(private swapHistoryService: SwapHistoryService) {}
+  constructor(
+    private swapHistoryService: SwapHistoryService,
+  ) {}
 
   @Query(() => [SwapHistoryEntity])
   async swapHistories(@Args('userWalletId') userWalletId: number) {
