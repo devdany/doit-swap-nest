@@ -91,7 +91,8 @@ export class ContractService {
     blockchainClient.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
       .on('transactionHash', (hash) => {
         this.swapHistoryRepository.update(historyId, {
-          result: SwapResult.MINTTING
+          result: SwapResult.MINTTING,
+          transaction: hash
         })
       })
       .on('receipt', (receipt) => {
