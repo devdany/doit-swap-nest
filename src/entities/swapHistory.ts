@@ -17,6 +17,7 @@ import { TokenEntity } from './token'
 import { UserWalletEntity } from './userWallet'
 
 export enum SwapResult {
+  CHECKING='CHECKING',
   BURNNING='BURNNING',
   MINTTING='MINTTING',
   FAIL='FAIL',
@@ -67,7 +68,7 @@ export class SwapHistoryEntity extends BaseEntity {
 
   @Field()
   @Column({
-    type: 'float'
+    type: 'float',
   })
   amount: number
 

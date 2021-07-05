@@ -5,6 +5,11 @@ import { Repository } from 'typeorm';
 import { SwapHistoryEntity, SwapResult } from '../entities/swapHistory';
 import { Repository as RepositoryKeyStore } from '../injectKeyStore';
 
+type UpdateHistoryArg = {
+  amount?: number
+  result?: SwapResult
+}
+
 @Injectable()
 export class SwapHistoryService {
   constructor(
@@ -26,6 +31,14 @@ export class SwapHistoryService {
     });
   }
 
+  async findHistoryByTransactionId(transactionId: string): Promise<SwapHistoryEntity> {
+    return this.swapHistoryRepository.findOne({
+      where: {
+        transaction: transactionId
+      }
+    })
+  }
+
   async createHistory(transaction: string, userWallet: UserWalletEntity, amount: number, from: TokenEntity, to: TokenEntity, result: SwapResult ): Promise<SwapHistoryEntity> {
     return this.swapHistoryRepository.create({
       transaction,
@@ -35,5 +48,11 @@ export class SwapHistoryService {
       to,
       result
     }).save()
+  }
+
+  async updateHistory(historyId: number, data: UpdateHistoryArg) {
+    return this.swapHistoryRepository.update(historyId, {
+      ...data
+    })
   }
 }

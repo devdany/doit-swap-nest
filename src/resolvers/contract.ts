@@ -44,7 +44,7 @@ export class ContractResolver {
     @Args('userWalletAddress') userWalletAddress: string,
     @Args('tokenAddress') tokenAddress: string,
     @Args('mintTokenAddress') mintTokenAddress: string,
-    @Args('transactionId') transactionId: string
+    @Args('transactionId') transactionId: string,
   ) {
     const jobId = transactionId
     // 같은 트랜잭션을 서치중인 다른 스케줄러가 있다? 이건 뭔가 문제가 있는것.
@@ -52,6 +52,18 @@ export class ContractResolver {
     if (isSameSwap) {
       return false
     }
+
+    const isExistHistory = await this.swapHistoryService.findHistoryByTransactionId(transactionId)
+
+    if (isExistHistory) {
+      return false
+    }
+
+    const userWallet = await this.userWalletService.findWallet(userWalletAddress)
+    const token = await this.tokenService.findByAddress(tokenAddress)
+    const mintToken = await this.tokenService.findByAddress(mintTokenAddress);
+
+    const createdHistory = await this.swapHistoryService.createHistory(transactionId, userWallet, 0, token, mintToken, SwapResult.CHECKING)
 
     let cnt = 0;
     this.schedulerRegistry.addCronJob(jobId, new CronJob(CronExpression.EVERY_MINUTE, async () => {
@@ -87,13 +99,10 @@ export class ContractResolver {
           type: Type.BURN
         })
 
-        const token = await this.tokenService.findByAddress(tokenAddress)
         const abi = JSON.parse(token.abi) as any[]
         const burnAbi = abi.find((attr) => attr.name === 'burn')
         const decodedParameter = await this.contractService.decodeParameter(burnTransaction, burnAbi, token, 'burn(uint256)')
-        const mintToken = await this.tokenService.findByAddress(mintTokenAddress);
-        const userWallet = await this.userWalletService.findWallet(userWalletAddress)
-
+        
         const bigAmount = bigint(decodedParameter.amount)
         const decimal = bigint(10).pow(token.decimal)
 
@@ -103,8 +112,7 @@ export class ContractResolver {
         const applyEstimatedFee = amount - estimatedFee;
         const bitApplyEstimatedFee = bigint(applyEstimatedFee)
         const mintAmount = decimal.multiply(bitApplyEstimatedFee).toString()
-
-        const createdHistory = await this.swapHistoryService.createHistory(transactionId, userWallet, applyEstimatedFee, token, mintToken, SwapResult.BURNNING)
+        await this.swapHistoryService.updateHistory(createdHistory.id, { amount: applyEstimatedFee, result: SwapResult.BURNNING })
         this.contractService.mint(mintToken, userWalletAddress, mintAmount, createdHistory.id);
         
       } else {
