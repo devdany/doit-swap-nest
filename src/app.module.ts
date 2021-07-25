@@ -16,7 +16,7 @@ import { TransactionModule } from './modules/transaction'
       installSubscriptionHandlers: true,
       autoSchemaFile: 'schema.gpl',
       subscriptions: {
-        path: '/subscriptions'
+        keepAlive: 5000,
       }
     }),
     UserWalletModule,
