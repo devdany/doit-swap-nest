@@ -70,11 +70,12 @@ export class ContractResolver {
       // 해당 트랜잭션이 처리되었는지 스케줄링 시작!
       cnt += 1;
       // 10분이상 처리가 안되면 그냥 날림
-      if (cnt > 10) {
+      if (cnt > 30) {
         // job 종료
         const job = this.schedulerRegistry.getCronJob(jobId)
         job.stop();
         this.schedulerRegistry.deleteCronJob(jobId)
+        await this.swapHistoryService.updateHistory(createdHistory.id, { result: SwapResult.FAIL })
       }
 
       const burnTransaction = await this.etherscanService.getTransaction(transactionId, tokenAddress)
@@ -117,13 +118,7 @@ export class ContractResolver {
         
       } else {
         // 실패처리
-        await this.transactionService.createTransaction({
-          from: userWalletAddress,
-          tokenAddress,
-          isError: '1',
-          transactionId: burnTransaction.hash,
-          type: Type.BURN
-        })
+        await this.swapHistoryService.updateHistory(createdHistory.id, { result: SwapResult.FAIL })
       }
 
       // job 종료
